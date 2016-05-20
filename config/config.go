@@ -9,7 +9,7 @@ import (
 var defaultConfig = Config{
 	Root:    "./",
 	Storage: "./files",
-	Port:    ":80",
+	Port:    ":8080",
 }
 
 // Config contains all the configuration options.

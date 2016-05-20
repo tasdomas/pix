@@ -3,8 +3,10 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 
 	"github.com/tasdomas/pixserver/config"
+	"github.com/tasdomas/pixserver/ui"
 )
 
 var cfgFile = flag.String("cfg", "", "configuration file")
@@ -16,4 +18,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
+
+	uiServer, err := ui.NewUIServer()
+	if err != nil {
+		log.Fatalf("failed to load UI server: %v", err)
+	}
+
+	log.Fatal(http.ListenAndServe(cfg.Port, uiServer))
 }
