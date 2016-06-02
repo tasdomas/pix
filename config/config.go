@@ -17,6 +17,7 @@ type Config struct {
 	Root    string `yaml:"root"`
 	Storage string `yaml:"storage"`
 	Port    string `yaml:"port"`
+	Secret  string `yaml:"secret"`
 }
 
 // Load loads the configuration file.

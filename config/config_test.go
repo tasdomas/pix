@@ -33,6 +33,7 @@ func (t *TSuite) TestReadConfig(c *gc.C) {
 root: /opt
 storage: /var/media
 port: :8080
+secret: thisisasecret
 `))
 	cfg, err := config.Load(fname)
 	c.Assert(err, gc.IsNil)
@@ -40,5 +41,21 @@ port: :8080
 		Root:    "/opt",
 		Storage: "/var/media",
 		Port:    ":8080",
+		Secret:  "thisisasecret",
+	})
+}
+
+func (t *TSuite) TestReadEmptyConfig(c *gc.C) {
+	temp := c.MkDir()
+	fname := path.Join(temp, "cfg.yml")
+
+	mustWrite(fname, []byte(``))
+	cfg, err := config.Load(fname)
+	c.Assert(err, gc.IsNil)
+	c.Assert(cfg, gc.DeepEquals, &config.Config{
+		Root:    "./",
+		Storage: "./files",
+		Port:    ":8080",
+		Secret:  "",
 	})
 }
