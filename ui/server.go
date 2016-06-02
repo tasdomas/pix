@@ -11,35 +11,54 @@ import (
 )
 
 const (
-	templateDir  = "../static/templates"
-	rootTemplate = "root.tpl"
+	templateDir = "../static/templates"
+)
+
+var (
+	templates = map[string]string{
+		"root": "root.tpl",
+	}
 )
 
 type uiServer struct {
-	rootTemplate *template.Template
+	templates map[string]*template.Template
 }
 
 func NewUIServer() (*uiServer, error) {
-	tplBox, err := rice.FindBox(templateDir)
-	if err != nil {
-		return nil, errgo.Mask(err)
-	}
-	rootTplR, err := tplBox.Open(rootTemplate)
-	if err != nil {
-		return nil, errgo.Mask(err)
-	}
-	defer rootTplR.Close()
-	rootTpl, err := tplFromReader("root", rootTplR)
+	tpls, err := loadTemplates(templates)
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
 	return &uiServer{
-		rootTemplate: rootTpl,
+		templates: tpls,
 	}, nil
 }
 
 func (s *uiServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	s.rootTemplate.Execute(resp, nil)
+	s.templates["root"].Execute(resp, nil)
+}
+
+func loadTemplates(templateLocations map[string]string) (map[string]*template.Template, error) {
+	tplBox, err := rice.FindBox(templateDir)
+	if err != nil {
+		return nil, errgo.Mask(err)
+	}
+	result := make(map[string]*template.Template)
+	for name, file := range templateLocations {
+		tplRaw, err := tplBox.Open(file)
+		if err != nil {
+			return nil, errgo.Mask(err)
+		}
+		tpl, err := tplFromReader("root", tplRaw)
+		if err != nil {
+			tplRaw.Close()
+			return nil, errgo.Mask(err)
+		}
+		tplRaw.Close()
+		result[name] = tpl
+	}
+	return result, nil
+
 }
 
 func tplFromReader(name string, contents ...io.Reader) (*template.Template, error) {

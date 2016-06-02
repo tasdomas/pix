@@ -7,7 +7,7 @@ import (
 
 	gc "gopkg.in/check.v1"
 
-	"github.com/tasdomas/pixserver/config"
+	"github.com/tasdomas/pix/config"
 )
 
 func mustWrite(filename string, contents []byte) {

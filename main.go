@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/tasdomas/pixserver/config"
-	"github.com/tasdomas/pixserver/ui"
+	"github.com/tasdomas/pix/config"
+	"github.com/tasdomas/pix/ui"
 )
 
 var cfgFile = flag.String("cfg", "", "configuration file")
