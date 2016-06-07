@@ -8,6 +8,7 @@ import (
 
 	"github.com/GeertJohan/go.rice"
 	"github.com/juju/errgo"
+	"github.com/julienschmidt/httprouter"
 )
 
 const (
@@ -22,6 +23,7 @@ var (
 
 type uiServer struct {
 	templates map[string]*template.Template
+	router    *httprouter.Router
 }
 
 func NewUIServer() (*uiServer, error) {
@@ -29,13 +31,22 @@ func NewUIServer() (*uiServer, error) {
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
-	return &uiServer{
+
+	s := &uiServer{
 		templates: tpls,
-	}, nil
+		router:    httprouter.New(),
+	}
+	s.POST("/upload", s.upload)
+	return s, nil
 }
 
 func (s *uiServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	s.templates["root"].Execute(resp, nil)
+	s.router.ServeHTTP(resp, req)
+	//s.templates["root"].Execute(resp, nil)
+}
+
+func (s *uiServer) upload(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+
 }
 
 func loadTemplates(templateLocations map[string]string) (map[string]*template.Template, error) {
