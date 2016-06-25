@@ -9,6 +9,8 @@ import (
 	"github.com/GeertJohan/go.rice"
 	"github.com/juju/errgo"
 	"github.com/julienschmidt/httprouter"
+
+	"github.com/tasdomas/pix/storage"
 )
 
 const (
@@ -21,12 +23,18 @@ var (
 	}
 )
 
+type storage interface {
+	Put(io.ReadSeeker) (string, error)
+	Get(string) (io.ReadSeeker, error)
+}
+
 type uiServer struct {
 	templates map[string]*template.Template
 	router    *httprouter.Router
+	storage   storage
 }
 
-func NewUIServer() (*uiServer, error) {
+func NewUIServers(s storage) (*uiServer, error) {
 	tpls, err := loadTemplates(templates)
 	if err != nil {
 		return nil, errgo.Mask(err)
@@ -35,6 +43,7 @@ func NewUIServer() (*uiServer, error) {
 	s := &uiServer{
 		templates: tpls,
 		router:    httprouter.New(),
+		storage:   s,
 	}
 	s.POST("/upload", s.upload)
 	return s, nil
