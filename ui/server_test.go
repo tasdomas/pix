@@ -9,7 +9,7 @@ import (
 )
 
 func TestServeRoot(t *testing.T) {
-	srv, err := ui.NewUIServer()
+	srv, err := ui.NewServer(nil)
 	if err != nil {
 		t.Errorf("failed to create server: %v", err)
 	}
@@ -17,9 +17,11 @@ func TestServeRoot(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to create request: %v", err)
 	}
+
 	rec := httptest.NewRecorder()
 	srv.ServeHTTP(rec, req)
-	if rec.Code != http.StatusOK {
+	if rec.Code != http.StatusNotFound {
 		t.Errorf("unexpected status: %d", rec.Code)
 	}
+
 }

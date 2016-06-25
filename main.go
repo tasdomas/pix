@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/tasdomas/pix/config"
+	"github.com/tasdomas/pix/storage"
 	"github.com/tasdomas/pix/ui"
 )
 
@@ -18,8 +19,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
-
-	uiServer, err := ui.NewUIServer()
+	st, err := storage.New(cfg.Storage)
+	if err != nil {
+		log.Fatalf("failed to create disk storage: %v", err)
+	}
+	uiServer, err := ui.NewServer(st)
 	if err != nil {
 		log.Fatalf("failed to load UI server: %v", err)
 	}
