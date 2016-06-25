@@ -5,12 +5,17 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"image"
+	_ "image/jpeg"
 	"io"
 	"os"
 	"path"
 
+	"github.com/disintegration/imaging"
 	"github.com/juju/errgo"
 )
+
+const THB_DIM = 200
 
 // storage will implement on-disk storage of images.
 // To keep it simple at the moment it will implement the following interface:
@@ -70,7 +75,41 @@ func (s *storage) Put(f io.ReadSeeker) (string, error) {
 	if err != nil {
 		return "", errgo.Mask(err)
 	}
+
+	thbName := path.Join(s.dir, fmt.Sprintf("%s_thb", hashName))
+	thb, err := os.OpenFile(thbName, os.O_RDWR|os.O_CREATE, 0600)
+	if err != nil {
+		return "", errgo.Mask(err)
+	}
+	defer thb.Close()
+	f.Seek(0, 0)
+	err = generateThumbnail(f, thb)
+	if err != nil {
+		return "", errgo.Mask(err)
+	}
+
 	return hashName, nil
+}
+
+func generateThumbnail(in io.Reader, out io.Writer) error {
+	img, _, err := image.Decode(in)
+	if err != nil {
+		return err
+	}
+
+	bounds := img.Bounds().Max
+	var w int
+	var h int
+	if bounds.X >= bounds.Y {
+		w = bounds.Y
+		h = bounds.Y
+	} else {
+		w = bounds.X
+		h = bounds.X
+	}
+	thb := imaging.CropCenter(img, w, h)
+	thb = imaging.Resize(thb, THB_DIM, THB_DIM, imaging.Lanczos)
+	return imaging.Encode(out, thb, imaging.JPEG)
 }
 
 func randomName() (string, error) {
