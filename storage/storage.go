@@ -32,6 +32,7 @@ type storage struct {
 var _ Storage = (*storage)(nil)
 
 func New(dir string) (*storage, error) {
+	os.MkdirAll(dir, 0700)
 	return &storage{
 		dir: dir,
 	}, nil

@@ -10,7 +10,7 @@ import (
 )
 
 func TestStorage(t *testing.T) {
-	st, err := storage.New(".testdata")
+	st, err := storage.New(".testdata/tmp/")
 	if err != nil {
 		t.Error(err)
 	}
