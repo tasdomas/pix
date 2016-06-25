@@ -10,7 +10,12 @@ import (
 )
 
 func TestStorage(t *testing.T) {
-	st, err := storage.New(".testdata/tmp/")
+	stPath, err := ioutil.TempDir(".testdata/tmp", "")
+	if err != nil {
+		t.Error(err)
+	}
+	defer os.RemoveAll(stPath)
+	st, err := storage.New(stPath)
 	if err != nil {
 		t.Error(err)
 	}
@@ -43,4 +48,49 @@ func TestStorage(t *testing.T) {
 	if !bytes.Equal(bytes_f, bytes_stored) {
 		t.Errorf("retrieved from storage does not match stored")
 	}
+}
+
+func TestStorageIndex(t *testing.T) {
+	stPath, err := ioutil.TempDir(".testdata/tmp", "")
+	if err != nil {
+		t.Error(err)
+	}
+	defer os.RemoveAll(stPath)
+	st, err := storage.New(stPath)
+	if err != nil {
+		t.Error(err)
+	}
+	f, err := os.Open(".testdata/pic.jpg")
+	if err != nil {
+		t.Error(err)
+	}
+	defer f.Close()
+	id, err := st.Put(f)
+	if err != nil {
+		t.Error(err)
+	}
+	if id == "" {
+		t.Errorf("no valid id generated")
+	}
+	l, err := st.List()
+	if err != nil {
+		t.Error(err)
+	}
+	if l[0] != id {
+		t.Errorf("list does not contain inserted id")
+	}
+
+	// Test index reloading.
+	st2, err := storage.New(stPath)
+	if err != nil {
+		t.Error(err)
+	}
+	l, err = st2.List()
+	if err != nil {
+		t.Error(err)
+	}
+	if l[0] != id {
+		t.Errorf("list does not contain inserted id")
+	}
+
 }

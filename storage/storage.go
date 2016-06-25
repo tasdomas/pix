@@ -12,10 +12,14 @@ import (
 	"path"
 
 	"github.com/disintegration/imaging"
+	"github.com/fvbock/trie"
 	"github.com/juju/errgo"
 )
 
-const THB_DIM = 200
+const (
+	THB_DIM  = 200
+	IDX_FILE = ".idx"
+)
 
 // storage will implement on-disk storage of images.
 // To keep it simple at the moment it will implement the following interface:
@@ -23,18 +27,31 @@ type Storage interface {
 	Put(f io.ReadSeeker) (string, error)
 	Get(string) (io.ReadCloser, error)
 	//GetThumb(string) (io.Read, error)
+	List() ([]string, error)
 }
 
 type storage struct {
-	dir string
+	entries *trie.Trie
+	dir     string
 }
 
 var _ Storage = (*storage)(nil)
 
 func New(dir string) (*storage, error) {
 	os.MkdirAll(dir, 0700)
+	// Check for reload.
+	idx := trie.NewTrie()
+	idxFile := path.Join(dir, IDX_FILE)
+	if _, err := os.Stat(idxFile); err == nil {
+		idx, err = trie.LoadFromFile(idxFile)
+		if err != nil {
+			return nil, errgo.Mask(err)
+		}
+	}
+
 	return &storage{
-		dir: dir,
+		entries: idx,
+		dir:     dir,
 	}, nil
 }
 
@@ -89,6 +106,9 @@ func (s *storage) Put(f io.ReadSeeker) (string, error) {
 		return "", errgo.Mask(err)
 	}
 
+	s.entries.Add(hashName)
+	// Ignoring this error for now.
+	s.entries.DumpToFile(path.Join(s.dir, IDX_FILE))
 	return hashName, nil
 }
 
@@ -111,6 +131,10 @@ func generateThumbnail(in io.Reader, out io.Writer) error {
 	thb := imaging.CropCenter(img, w, h)
 	thb = imaging.Resize(thb, THB_DIM, THB_DIM, imaging.Lanczos)
 	return imaging.Encode(out, thb, imaging.JPEG)
+}
+
+func (s *storage) List() ([]string, error) {
+	return s.entries.MembersList(), nil
 }
 
 func randomName() (string, error) {

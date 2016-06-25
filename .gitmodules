@@ -25,3 +25,15 @@
 [submodule "vendor/github.com/juju/errgo"]
 	path = vendor/github.com/juju/errgo
 	url = https://github.com/juju/errgo
+[submodule "vendor/github.com/disintegration/imaging"]
+	path = vendor/github.com/disintegration/imaging
+	url = https://github.com/disintegration/imaging
+[submodule "vendor/golang.org/x/image"]
+	path = vendor/golang.org/x/image
+	url = https://go.googlesource.com/image
+[submodule "vendor/github.com/fvbock/trie"]
+	path = vendor/github.com/fvbock/trie
+	url = https://github.com/fvbock/trie
+[submodule "vendor/github.com/julienschmidt/httprouter"]
+	path = vendor/github.com/julienschmidt/httprouter
+	url = https://github.com/julienschmidt/httprouter
