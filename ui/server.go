@@ -25,7 +25,7 @@ var (
 
 type storage interface {
 	Put(io.ReadSeeker) (string, error)
-	Get(string) (io.ReadCloser, error)
+	Get(string, string) (io.ReadCloser, error)
 	List() ([]string, error)
 }
 
@@ -47,12 +47,52 @@ func NewServer(st storage) (*uiServer, error) {
 		storage:   st,
 	}
 	s.router.POST("/upload", s.upload)
+	s.router.GET("/", s.root)
+	s.router.GET("/image/:img", s.imagePage)
+	s.router.GET("/image/:img/raw", s.serveImageMod(""))
+	s.router.GET("/image/:img/thumb", s.serveImageMod("thb"))
 	return s, nil
 }
 
 func (s *uiServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(resp, req)
-	//s.templates["root"].Execute(resp, nil)
+}
+
+func (s *uiServer) imagePage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+
+}
+
+func (s *uiServer) serveImageMod(mod string) func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+		w.Header().Set("Content-Type", "image/jpeg")
+		img := params.ByName("img")
+		if img == "" {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		f, err := s.storage.Get(img, mod)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Printf("could not retrieve image from storage: %s", err.Error())
+		}
+		defer f.Close()
+		io.Copy(w, f)
+	}
+}
+
+func (s *uiServer) root(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	list, err := s.storage.List()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "%s", err.Error())
+	}
+
+	params := struct {
+		Images []string
+	}{
+		Images: list,
+	}
+
+	s.templates["root"].Execute(w, params)
 }
 
 func (s *uiServer) upload(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

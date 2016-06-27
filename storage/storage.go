@@ -25,8 +25,7 @@ const (
 // To keep it simple at the moment it will implement the following interface:
 type Storage interface {
 	Put(f io.ReadSeeker) (string, error)
-	Get(string) (io.ReadCloser, error)
-	//GetThumb(string) (io.Read, error)
+	Get(string, string) (io.ReadCloser, error)
 	List() ([]string, error)
 }
 
@@ -55,7 +54,10 @@ func New(dir string) (*storage, error) {
 	}, nil
 }
 
-func (s *storage) Get(id string) (io.ReadCloser, error) {
+func (s *storage) Get(id string, mod string) (io.ReadCloser, error) {
+	if mod != "" {
+		id = fmt.Sprintf("%s_%s", id, mod)
+	}
 	f, err := os.Open(path.Join(s.dir, id))
 	if err != nil {
 		return nil, errgo.Mask(err)
