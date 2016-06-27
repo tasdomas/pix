@@ -1,9 +1,11 @@
 package ui
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/GeertJohan/go.rice"
@@ -54,7 +56,30 @@ func (s *uiServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *uiServer) upload(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-
+	// TODO check secret here.
+	err := r.ParseMultipartForm(10 * 1024 * 1024)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "%s", err.Error())
+	}
+	files := r.MultipartForm.File["image"]
+	if len(files) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "no image upload found")
+	}
+	for _, f := range files {
+		data, err := f.Open()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "%s", err.Error())
+		}
+		hash, err := s.storage.Put(data)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "%s", err.Error())
+		}
+		log.Printf("stored image: %s", hash)
+	}
 }
 
 func loadTemplates(templateLocations map[string]string) (map[string]*template.Template, error) {
