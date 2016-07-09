@@ -32,7 +32,7 @@ func TestStorage(t *testing.T) {
 		t.Errorf("no valid id generated")
 	}
 	f.Seek(0, 0)
-	stored, err := st.Get(id)
+	stored, err := st.Get(id, "")
 	if err != nil {
 		t.Error(err)
 	}
