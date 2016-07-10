@@ -17,8 +17,9 @@ import (
 )
 
 const (
-	THB_DIM  = 200
-	IDX_FILE = ".idx"
+	THB_DIM     = 200
+	PREVIEW_DIM = 1000
+	IDX_FILE    = ".idx"
 )
 
 // storage will implement on-disk storage of images.
@@ -55,7 +56,7 @@ func New(dir string) (*storage, error) {
 }
 
 func (s *storage) Get(id string, mod string) (io.ReadCloser, error) {
-	if mod != "" {
+	if mod != "" && mod != "full" {
 		id = fmt.Sprintf("%s_%s", id, mod)
 	}
 	f, err := os.Open(path.Join(s.dir, id))
@@ -108,6 +109,18 @@ func (s *storage) Put(f io.ReadSeeker) (string, error) {
 		return "", errgo.Mask(err)
 	}
 
+	prvName := path.Join(s.dir, fmt.Sprintf("%s_large", hashName))
+	prv, err := os.OpenFile(prvName, os.O_RDWR|os.O_CREATE, 0600)
+	if err != nil {
+		return "", errgo.Mask(err)
+	}
+	defer prv.Close()
+	f.Seek(0, 0)
+	err = generatePreview(f, prv)
+	if err != nil {
+		return "", errgo.Mask(err)
+	}
+
 	s.entries.Add(hashName)
 	// Ignoring this error for now.
 	s.entries.DumpToFile(path.Join(s.dir, IDX_FILE))
@@ -133,6 +146,28 @@ func generateThumbnail(in io.Reader, out io.Writer) error {
 	thb := imaging.CropCenter(img, w, h)
 	thb = imaging.Resize(thb, THB_DIM, THB_DIM, imaging.Lanczos)
 	return imaging.Encode(out, thb, imaging.JPEG)
+}
+
+func generatePreview(in io.Reader, out io.Writer) error {
+	img, _, err := image.Decode(in)
+	if err != nil {
+		return err
+	}
+
+	bounds := img.Bounds().Max
+	var w int
+	var h int
+	if bounds.X < PREVIEW_DIM && bounds.Y < PREVIEW_DIM {
+		_, err := io.Copy(out, in)
+		return err
+	}
+	if bounds.X >= bounds.Y {
+		w = PREVIEW_DIM
+	} else {
+		h = PREVIEW_DIM
+	}
+	prv := imaging.Resize(img, w, h, imaging.Lanczos)
+	return imaging.Encode(out, prv, imaging.JPEG)
 }
 
 func (s *storage) List() ([]string, error) {

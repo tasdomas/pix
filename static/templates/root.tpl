@@ -13,6 +13,6 @@
     </style>
   </head>
   <body>
-    {{range .Images}}<div class="imgCont"><img src="/image/{{ . }}/thumb"></div>{{end}}
+    {{range .Images}}<div class="imgCont"><a href="/image/{{ . }}"> <img src="/image/{{ . }}/thumb"></a></div>{{end}}
   </body>
 </html>

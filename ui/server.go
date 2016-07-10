@@ -20,6 +20,7 @@ const (
 var (
 	templates = map[string]string{
 		"root": "root.tpl",
+		"img":  "img.tpl",
 	}
 )
 
@@ -51,6 +52,7 @@ func NewServer(st storage) (*uiServer, error) {
 	s.router.GET("/image/:img", s.imagePage)
 	s.router.GET("/image/:img/raw", s.serveImageMod(""))
 	s.router.GET("/image/:img/thumb", s.serveImageMod("thb"))
+	s.router.GET("/image/:img/large", s.serveImageMod("large"))
 	return s, nil
 }
 
@@ -58,8 +60,22 @@ func (s *uiServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	s.router.ServeHTTP(resp, req)
 }
 
-func (s *uiServer) imagePage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-
+func (s *uiServer) imagePage(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	img := params.ByName("img")
+	if img == "" {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	_, err := s.storage.Get(img, "")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf("could not retrieve image from storage: %s", err.Error())
+	}
+	tplParams := struct {
+		Image string
+	}{
+		Image: img,
+	}
+	s.templates["img"].Execute(w, tplParams)
 }
 
 func (s *uiServer) serveImageMod(mod string) func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
