@@ -15,6 +15,7 @@ import (
 
 const (
 	templateDir = "../static/templates"
+	staticDir   = "../static/serve"
 )
 
 var (
@@ -47,6 +48,13 @@ func NewServer(st storage) (*uiServer, error) {
 		router:    httprouter.New(),
 		storage:   st,
 	}
+
+	staticBox, err := rice.FindBox(staticDir)
+	if err != nil {
+		return nil, errgo.Mask(err)
+	}
+	s.router.ServeFiles("/static/*filepath", staticBox.HTTPBox())
+
 	s.router.POST("/upload", s.upload)
 	s.router.GET("/", s.root)
 	s.router.GET("/image/:img", s.imagePage)
