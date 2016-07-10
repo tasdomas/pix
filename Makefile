@@ -2,7 +2,7 @@ PKG ?= github.com/tasdomas/pix
 
 GOBIN = $(abspath ./bin)
 
-TESTS := $(shell go list github.com/tasdomas/pix/... | grep -v /vendor/)
+PKGS := $(shell go list github.com/tasdomas/pix/... | grep -v /vendor/)
 
 all: deps
 
@@ -14,7 +14,7 @@ $(GOBIN)/rice:
 
 .PHONY: check
 check:
-	go test $(TESTS)
+	go test $(PKGS)
 
 .PHONY: run
 run:
@@ -22,3 +22,12 @@ run:
 
 print-%:
 	@echo '$*=$($*)'
+
+build: embed
+	go build github.com/tasdomas/pix
+
+.PHONY: embed
+embed: $(GOBIN)/rice $(PKGS)
+
+github.com/tasdomas/%:
+	rice embed-go -i $@

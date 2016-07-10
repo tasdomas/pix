@@ -14,11 +14,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-const (
-	templateDir = "../static/templates"
-	staticDir   = "../static/serve"
-)
-
 var (
 	templates = map[string]string{
 		"root": "root.tpl",
@@ -50,7 +45,7 @@ func NewServer(st storage) (*uiServer, error) {
 		storage:   st,
 	}
 
-	staticBox, err := rice.FindBox(staticDir)
+	staticBox, err := rice.FindBox("../static/serve")
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
@@ -149,7 +144,7 @@ func (s *uiServer) upload(w http.ResponseWriter, r *http.Request, _ httprouter.P
 }
 
 func loadTemplates(templateLocations map[string]string) (map[string]*template.Template, error) {
-	tplBox, err := rice.FindBox(templateDir)
+	tplBox, err := rice.FindBox("../static/templates")
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
