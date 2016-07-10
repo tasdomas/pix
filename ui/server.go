@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
 
 	"github.com/GeertJohan/go.rice"
 	"github.com/juju/errgo"
@@ -109,6 +110,7 @@ func (s *uiServer) root(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%s", err.Error())
 	}
+	sort.Strings(list)
 
 	params := struct {
 		Images []string
