@@ -9,8 +9,14 @@ all: deps
 .PHONY: deps
 deps: $(GOBIN)/rice
 
+$(GOBIN)/vendetta:
+	go get github.com/dpw/vendetta
+
 $(GOBIN)/rice:
 	go install github.com/GeertJohan/go.rice/rice
+
+update-deps: $(GOBIN)/vendetta
+	$(GOBIN)/vendetta -n $(PKG) -u
 
 .PHONY: check
 check:
@@ -30,4 +36,4 @@ build: embed
 embed: $(GOBIN)/rice $(PKGS)
 
 github.com/tasdomas/%:
-	rice embed-go -i $@
+	$(GOBIN)/rice embed-go -i $@
