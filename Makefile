@@ -24,7 +24,7 @@ check:
 
 .PHONY: run
 run:
-	go run main.go
+	go run main.go -cfg cfg.yaml
 
 print-%:
 	@echo '$*=$($*)'

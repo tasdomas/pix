@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create disk storage: %v", err)
 	}
-	uiServer, err := ui.NewServer(st)
+	uiServer, err := ui.NewServer(st, cfg.Secret)
 	if err != nil {
 		log.Fatalf("failed to load UI server: %v", err)
 	}

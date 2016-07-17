@@ -10,6 +10,7 @@ var defaultConfig = Config{
 	Root:    "./",
 	Storage: "./files",
 	Port:    ":8080",
+	Secret:  "", // empty secret will not allow new images to be uploaded.
 }
 
 // Config contains all the configuration options.

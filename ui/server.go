@@ -14,6 +14,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+const baseTemplate = "base.tpl"
+
 var (
 	templates = map[string]string{
 		"root": "root.tpl",
@@ -31,15 +33,17 @@ type uiServer struct {
 	templates map[string]*template.Template
 	router    *httprouter.Router
 	storage   storage
+	secret    string
 }
 
-func NewServer(st storage) (*uiServer, error) {
+func NewServer(st storage, secret string) (*uiServer, error) {
 	tpls, err := loadTemplates(templates)
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
 
 	s := &uiServer{
+		secret:    secret,
 		templates: tpls,
 		router:    httprouter.New(),
 		storage:   st,
@@ -117,7 +121,12 @@ func (s *uiServer) root(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 }
 
 func (s *uiServer) upload(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	// TODO check secret here.
+	secret := r.FormValue("secret")
+	if secret == "" || secret != s.secret || s.secret == "" {
+		w.WriteHeader(http.StatusForbidden)
+		log.Printf("rejected file upload, provided key was %q", secret)
+		return
+	}
 	err := r.ParseMultipartForm(10 * 1024 * 1024)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -148,13 +157,18 @@ func loadTemplates(templateLocations map[string]string) (map[string]*template.Te
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
+	tplBase, err := tplBox.Open(baseTemplate)
+	if err != nil {
+		return nil, errgo.Mask(err)
+	}
+
 	result := make(map[string]*template.Template)
 	for name, file := range templateLocations {
 		tplRaw, err := tplBox.Open(file)
 		if err != nil {
 			return nil, errgo.Mask(err)
 		}
-		tpl, err := tplFromReader("root", tplRaw)
+		tpl, err := tplFromReader("root", tplRaw, tplBase)
 		if err != nil {
 			tplRaw.Close()
 			return nil, errgo.Mask(err)
