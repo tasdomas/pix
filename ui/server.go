@@ -53,8 +53,9 @@ func NewServer(st storage, secret string) (*uiServer, error) {
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
-	s.router.ServeFiles("/static/*filepath", staticBox.HTTPBox())
 
+	s.router.ServeFiles("/static/*filepath", staticBox.HTTPBox())
+	s.router.GET("/favicon.ico", mustServeFile(staticBox, "favicon.ico"))
 	s.router.POST("/upload", s.upload)
 	s.router.GET("/", s.root)
 	s.router.GET("/image/:img", s.imagePage)
@@ -164,6 +165,7 @@ func loadTemplates(templateLocations map[string]string) (map[string]*template.Te
 
 	result := make(map[string]*template.Template)
 	for name, file := range templateLocations {
+		tplBase.Seek(0, 0)
 		tplRaw, err := tplBox.Open(file)
 		if err != nil {
 			return nil, errgo.Mask(err)
@@ -193,4 +195,15 @@ func tplFromReader(name string, contents ...io.Reader) (*template.Template, erro
 		}
 	}
 	return tpl, nil
+}
+
+func mustServeFile(box *rice.Box, name string) httprouter.Handle {
+	f, err := box.Open(name)
+	if err != nil {
+		panic(err)
+	}
+	return func(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+		f.Seek(0, 0)
+		io.Copy(w, f)
+	}
 }

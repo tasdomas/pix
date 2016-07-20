@@ -1,5 +1,7 @@
 {{define "content"}}
-  {{range .Images}}
-    <div class="imgCont"><a href="/image/{{ . }}"> <img src="/image/{{ . }}/thumb"></a></div>
-  {{end}}
+  <div id="thumbnails">
+    {{range .Images}}
+    <a class="img-thumb" href="/image/{{ . }}"> <img src="/image/{{ . }}/thumb"></a>
+    {{end}}
+  </div>
 {{end}}

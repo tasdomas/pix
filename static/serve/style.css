@@ -1,1 +1,108 @@
-aasdfsad
+body {
+    font-family: sans-serif;
+}
+
+#wrap {
+    width: 90%;
+    max-width: 80em;
+    margin: 0 auto;
+}
+
+#header {
+    width: 80%;
+    max-width: 60em;
+    margin: 0 auto 1.4em auto;
+}
+
+#header h1 {
+    display: inline;
+}
+
+#header #expl {
+    margin-left: 10em;
+}
+
+#header #expl a {
+    color: black;
+    text-decoration: none;
+}
+
+#header #expl a:hover {
+    border-bottom: 1px dotted black;
+}
+
+#header #title {
+    text-decoration: none;
+    color: #003300;
+}
+
+#thumbnails {
+    text-align: center;
+}
+
+.img-thumb {
+    height: 200px;
+    width: 200px;
+    margin: 10px;
+    display: inline-block;
+}
+
+.img {
+    width: 50%;
+    max-width: 40em;
+}
+
+#img-preview {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+    max-width: 40em;
+
+}
+
+#img-preview img {
+    width: 100%;
+    max-width: 40em;
+}
+
+#sideblock {
+    display: inline-block;
+    width: 30%;
+    max-width: 20em;
+    vertical-align: top;
+    padding: 4em 2em;x
+}
+
+#preview {
+    width: 1000px;
+    vertical-align: top;
+}
+
+#sideblock a.download {
+    display: inline-block;
+    margin: 1em 2em;
+    padding: 0.3em 1.2em;
+    background-color: #008000;
+    border-bottom: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+
+#sideblock a.download:hover {
+    background-color: #006600;
+    border-bottom: none;
+}
+
+#sideblock a {
+    display: inline-block;
+    color: black;
+    text-decoration: none;
+    border-bottom: 1px dotted red;
+}
+
+#sideblock a:hover {
+    border-bottom: 1px solid red;
+}
