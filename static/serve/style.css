@@ -11,7 +11,7 @@ body {
 #header {
     width: 80%;
     max-width: 60em;
-    margin: 0 auto 1.4em auto;
+    margin: 1.5em auto 1.5em auto;
 }
 
 #header h1 {
@@ -41,9 +41,9 @@ body {
 }
 
 .img-thumb {
-    height: 200px;
-    width: 200px;
-    margin: 10px;
+    height: 15em;
+    width: 15em;
+    margin: 0.2em;
     display: inline-block;
 }
 
@@ -74,7 +74,6 @@ body {
 }
 
 #preview {
-    width: 1000px;
     vertical-align: top;
 }
 

@@ -7,6 +7,7 @@ import (
 )
 
 var defaultConfig = Config{
+	Name:    "3pxls",
 	Root:    "./",
 	Storage: "./files",
 	Port:    ":8080",
@@ -15,6 +16,7 @@ var defaultConfig = Config{
 
 // Config contains all the configuration options.
 type Config struct {
+	Name    string `yaml:"name"`
 	Root    string `yaml:"root"`
 	Storage string `yaml:"storage"`
 	Port    string `yaml:"port"`

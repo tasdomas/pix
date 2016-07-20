@@ -34,15 +34,17 @@ type uiServer struct {
 	router    *httprouter.Router
 	storage   storage
 	secret    string
+	name      string
 }
 
-func NewServer(st storage, secret string) (*uiServer, error) {
+func NewServer(st storage, name, secret string) (*uiServer, error) {
 	tpls, err := loadTemplates(templates)
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
 
 	s := &uiServer{
+		name:      name,
 		secret:    secret,
 		templates: tpls,
 		router:    httprouter.New(),
@@ -80,9 +82,11 @@ func (s *uiServer) imagePage(w http.ResponseWriter, r *http.Request, params http
 		log.Printf("could not retrieve image from storage: %s", err.Error())
 	}
 	tplParams := struct {
-		Image string
+		SiteName string
+		Image    string
 	}{
-		Image: img,
+		SiteName: s.name,
+		Image:    img,
 	}
 	s.templates["img"].Execute(w, tplParams)
 }
@@ -113,9 +117,11 @@ func (s *uiServer) root(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	sort.Strings(list)
 
 	params := struct {
-		Images []string
+		SiteName string
+		Images   []string
 	}{
-		Images: list,
+		SiteName: s.name,
+		Images:   list,
 	}
 
 	s.templates["root"].Execute(w, params)
