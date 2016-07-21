@@ -42,6 +42,8 @@ secret: thisisasecret
 		Storage: "/var/media",
 		Port:    ":8080",
 		Secret:  "thisisasecret",
+		Name:    "3pxls",
+		GAID:    "",
 	})
 }
 
@@ -57,5 +59,7 @@ func (t *TSuite) TestReadEmptyConfig(c *gc.C) {
 		Storage: "./files",
 		Port:    ":8080",
 		Secret:  "",
+		Name:    "3pxls",
+		GAID:    "",
 	})
 }

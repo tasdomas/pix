@@ -30,25 +30,27 @@ type storage interface {
 }
 
 type uiServer struct {
-	templates map[string]*template.Template
-	router    *httprouter.Router
-	storage   storage
-	secret    string
-	name      string
+	templates    map[string]*template.Template
+	router       *httprouter.Router
+	storage      storage
+	secret       string
+	name         string
+	analytics_id string
 }
 
-func NewServer(st storage, name, secret string) (*uiServer, error) {
+func NewServer(st storage, name, secret, analytics_id string) (*uiServer, error) {
 	tpls, err := loadTemplates(templates)
 	if err != nil {
 		return nil, errgo.Mask(err)
 	}
 
 	s := &uiServer{
-		name:      name,
-		secret:    secret,
-		templates: tpls,
-		router:    httprouter.New(),
-		storage:   st,
+		name:         name,
+		secret:       secret,
+		analytics_id: analytics_id,
+		templates:    tpls,
+		router:       httprouter.New(),
+		storage:      st,
 	}
 
 	staticBox, err := rice.FindBox("../static/serve")
@@ -82,11 +84,13 @@ func (s *uiServer) imagePage(w http.ResponseWriter, r *http.Request, params http
 		log.Printf("could not retrieve image from storage: %s", err.Error())
 	}
 	tplParams := struct {
-		SiteName string
-		Image    string
+		SiteName    string
+		Image       string
+		AnalyticsID string
 	}{
-		SiteName: s.name,
-		Image:    img,
+		AnalyticsID: s.analytics_id,
+		SiteName:    s.name,
+		Image:       img,
 	}
 	s.templates["img"].Execute(w, tplParams)
 }
@@ -117,11 +121,13 @@ func (s *uiServer) root(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	sort.Strings(list)
 
 	params := struct {
-		SiteName string
-		Images   []string
+		SiteName    string
+		AnalyticsID string
+		Images      []string
 	}{
-		SiteName: s.name,
-		Images:   list,
+		AnalyticsID: s.analytics_id,
+		SiteName:    s.name,
+		Images:      list,
 	}
 
 	s.templates["root"].Execute(w, params)

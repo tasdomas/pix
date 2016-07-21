@@ -12,6 +12,7 @@ var defaultConfig = Config{
 	Storage: "./files",
 	Port:    ":8080",
 	Secret:  "", // empty secret will not allow new images to be uploaded.
+	GAID:    "",
 }
 
 // Config contains all the configuration options.
@@ -21,6 +22,7 @@ type Config struct {
 	Storage string `yaml:"storage"`
 	Port    string `yaml:"port"`
 	Secret  string `yaml:"secret"`
+	GAID    string `yaml:"GAID"`
 }
 
 // Load loads the configuration file.

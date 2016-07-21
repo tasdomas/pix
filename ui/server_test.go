@@ -16,7 +16,7 @@ func (*NilStorage) Get(_ string, _ string) (io.ReadCloser, error) { return nil, 
 func (*NilStorage) List() ([]string, error)                       { return nil, nil }
 
 func TestServeRoot(t *testing.T) {
-	srv, err := ui.NewServer(&NilStorage{})
+	srv, err := ui.NewServer(&NilStorage{}, "", "", "")
 	if err != nil {
 		t.Errorf("failed to create server: %v", err)
 	}
