@@ -41,10 +41,15 @@ body {
 }
 
 .img-thumb {
-    height: 15em;
-    width: 15em;
+    height: 12em;
+    width: 12em;
     margin: 0.2em;
     display: inline-block;
+}
+
+.img-thumb img {
+    height: 12em;
+    width: 12em;    
 }
 
 .img {
