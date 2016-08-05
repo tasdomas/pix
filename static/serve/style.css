@@ -1,5 +1,6 @@
 body {
     font-family: sans-serif;
+    margin: 0;
 }
 
 #wrap {
@@ -8,10 +9,11 @@ body {
     margin: 0 auto;
 }
 
-#header {
-    width: 80%;
-    max-width: 60em;
-    margin: 1.5em auto 1.5em auto;
+#header, #footer {
+    margin: 0 0 1.5em 0;
+    background: #666;
+    padding: 1.5em 4em;
+    color: #990000;
 }
 
 #header h1 {
@@ -20,20 +22,27 @@ body {
 
 #header #expl {
     margin-left: 10em;
+    color: #990000;
+    font-weight: bold;
 }
 
 #header #expl a {
-    color: black;
+    color: #990000;
     text-decoration: none;
 }
 
 #header #expl a:hover {
-    border-bottom: 1px dotted black;
+    border-bottom: 1px dotted red;
 }
 
 #header #title {
     text-decoration: none;
-    color: #003300;
+    color: #eee;
+}
+
+#footer {
+    margin-top: 1.5em;
+    color: #999;
 }
 
 #thumbnails {
@@ -62,7 +71,6 @@ body {
     vertical-align: top;
     width: 50%;
     max-width: 40em;
-
 }
 
 #img-preview img {

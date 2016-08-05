@@ -23,6 +23,9 @@
 	<span id="expl"><a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a> licensed images</span>
       </div>
       {{template "content" .}}
+      <div id="footer">
+	These images are free to use for your projects. Enjoy!
+      </div>
     </div>
 </body>
 </html>
