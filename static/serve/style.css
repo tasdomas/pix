@@ -1,76 +1,26 @@
-body {
-    font-family: sans-serif;
-    margin: 0;
+#header {
+    margin-top: 3%;
+    padding-bottom: 3%;
 }
 
-#wrap {
-    width: 90%;
-    max-width: 80em;
-    margin: 0 auto;
+#logo {
+    max-width: 15rem;
 }
 
-#header, #footer {
-    margin: 0 0 1.5em 0;
-    background: #666;
-    padding: 1.5em 4em;
-    color: #990000;
+#expl {
+    font-size: 2em;
 }
 
-#header h1 {
-    display: inline;
+#expl2 {
+    text-align: right;
 }
-
-#header #expl {
-    margin-left: 10em;
-    color: #990000;
+.asterisk {
     font-weight: bold;
+    color: red;
 }
 
-#header #expl a {
-    color: #990000;
-    text-decoration: none;
-}
-
-#header #expl a:hover {
-    border-bottom: 1px dotted red;
-}
-
-#header #title {
-    text-decoration: none;
-    color: #eee;
-}
-
-#footer {
-    margin-top: 1.5em;
-    color: #999;
-}
-
-#thumbnails {
-    text-align: center;
-}
-
-.img-thumb {
-    height: 12em;
-    width: 12em;
-    margin: 0.2em;
-    display: inline-block;
-}
-
-.img-thumb img {
-    height: 12em;
-    width: 12em;    
-}
-
-.img {
-    width: 50%;
-    max-width: 40em;
-}
-
-#img-preview {
-    display: inline-block;
-    vertical-align: top;
-    width: 50%;
-    max-width: 40em;
+#expl {
+    margin-top: 5rem;
 }
 
 #img-preview img {
@@ -78,6 +28,53 @@ body {
     max-width: 40em;
 }
 
+.image-meta {
+    margin: 3.5rem 0.5rem;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+a.download {
+    margin: 1em auto;
+    padding: 0.3em 1.2em;
+    background-color: #008000;
+    border-bottom: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+
+a.download:hover {
+    background-color: #006600;
+    border-bottom: none;
+}
+
+.image-meta share-button {
+    background-color: #008000;
+    color: white;
+    padding: 0.3em 1.2em;
+    text-transform: none;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.image-meta share-button:hover {
+    background-color: #006600;
+}
+
+.image-meta share-button:before {
+    display: none;
+}
+
+#footer {
+    margin-top: 6rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.8em;
+}
+/*
 #sideblock {
     display: inline-block;
     width: 30%;
@@ -118,3 +115,4 @@ body {
 #sideblock a:hover {
     border-bottom: 1px solid red;
 }
+*/
