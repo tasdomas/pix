@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"io/ioutil"
+	"os"
 	"path"
 	"testing"
 
@@ -62,4 +63,11 @@ func (t *TSuite) TestReadEmptyConfig(c *gc.C) {
 		Name:    "3pxls",
 		GAID:    "",
 	})
+}
+
+func (t *TSuite) TestReadFromEnv(c *gc.C) {
+	os.Setenv("PIX_NAME", "blahdiblah")
+	cfg, err := config.LoadFromEnv()
+	c.Assert(err, gc.IsNil)
+	c.Assert(cfg.Name, gc.Equals, "blahdiblah")
 }

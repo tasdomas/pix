@@ -2,6 +2,7 @@ package config
 
 import (
 	"io/ioutil"
+	"os"
 
 	"gopkg.in/yaml.v2"
 )
@@ -45,4 +46,19 @@ func Load(file string) (*Config, error) {
 func LoadFromEnv() (*Config, error) {
 	cfg := defaultConfig
 
+	envKeys := map[string]*string{
+		"PIX_NAME":    &cfg.Name,
+		"PIX_ROOT":    &cfg.Root,
+		"PIX_STORAGE": &cfg.Storage,
+		"PIX_PORT":    &cfg.Port,
+		"PIX_SECRET":  &cfg.Secret,
+		"PIX_GAID":    &cfg.GAID,
+	}
+
+	for envvar, target := range envKeys {
+		if value, ok := os.LookupEnv(envvar); ok {
+			*target = value
+		}
+	}
+	return &cfg, nil
 }

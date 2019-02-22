@@ -10,7 +10,7 @@ import (
 )
 
 func TestStorage(t *testing.T) {
-	stPath, err := ioutil.TempDir(".testdata/tmp", "")
+	stPath, err := ioutil.TempDir(".testdata", "tmp")
 	if err != nil {
 		t.Error(err)
 	}
@@ -51,7 +51,7 @@ func TestStorage(t *testing.T) {
 }
 
 func TestStorageIndex(t *testing.T) {
-	stPath, err := ioutil.TempDir(".testdata/tmp", "")
+	stPath, err := ioutil.TempDir(".testdata", "tmp")
 	if err != nil {
 		t.Error(err)
 	}
