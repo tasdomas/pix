@@ -41,3 +41,8 @@ func Load(file string) (*Config, error) {
 	}
 	return &cfg, nil
 }
+
+func LoadFromEnv() (*Config, error) {
+	cfg := defaultConfig
+
+}
