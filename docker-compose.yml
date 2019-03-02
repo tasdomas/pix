@@ -1,0 +1,19 @@
+version: '3.2'
+services:
+  pix:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+    - "8181:8181"
+    restart: always
+    environment:
+    - PIX_PORT=:8181
+    - PIX_ROOT=./
+    - PIX_STORAGE=/srv/storage
+    - PIX_SECRET=bah
+    command: ["/srv/pix"]
+    volumes:
+    - type: bind
+      source: ./storage
+      target: /srv/storage

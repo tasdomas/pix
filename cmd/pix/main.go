@@ -15,7 +15,7 @@ var cfgFile = flag.String("cfg", "", "configuration file")
 func main() {
 	flag.Parse()
 
-	cfg, err := config.Load(*cfgFile)
+	cfg, err := config.LoadFromEnv()
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
