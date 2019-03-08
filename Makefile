@@ -6,19 +6,13 @@ VERSION := 0.0.1
 APP := pix
 IMAGE = $(APP):$(VERSION)
 
-all: deps
+all: deps pix
 
 .PHONY: deps
 deps: $(GOBIN)/rice
 
-$(GOBIN)/vendetta:
-	go get github.com/dpw/vendetta
-
 $(GOBIN)/rice:
 	go install github.com/GeertJohan/go.rice/rice
-
-update-deps: $(GOBIN)/vendetta
-	$(GOBIN)/vendetta -n $(PKG) -u
 
 .PHONY: check
 check:
@@ -27,9 +21,6 @@ check:
 .PHONY: run
 run:
 	go run main.go -cfg cfg.yaml
-
-print-%:
-	@echo '$*=$($*)'
 
 pix: embed
 	go build ./cmd/pix
