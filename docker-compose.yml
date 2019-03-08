@@ -5,10 +5,9 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-    - "8181:8181"
+    - "8181:8080"
     restart: always
     environment:
-    - PIX_PORT=:8181
     - PIX_ROOT=./
     - PIX_STORAGE=/srv/storage
     - PIX_SECRET=bah
