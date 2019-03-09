@@ -7,6 +7,7 @@ RUN mkdir -p ${GOBIN}
 RUN make
 FROM ubuntu:18.04 as deploy-env
 WORKDIR /srv/
+COPY nginx.conf.sigil .
 COPY --from=build-env /src/pix/pix .
 RUN apt-get update -y &&\
   apt-get upgrade -y
